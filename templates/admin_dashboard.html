@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+</head>
+<body style="font-family:Arial; background:#f4f7fa;">
+
+    <h2 style="text-align:center; padding:20px; background:#0c6efd; color:white;">
+        Admin Dashboard
+    </h2>
+
+    <div style="padding:20px; max-width:600px; margin:auto;">
+
+        <h3>Overview</h3>
+        <p>Total Doctors: <b>{{ doctors }}</b></p>
+        <p>Total Patients: <b>{{ patients }}</b></p>
+
+        <hr>
+
+        <h3>Quick Actions</h3>
+        <ul>
+            <li><a href="/add_doctor">Add Doctor</a></li>
+            <li><a href="/view_doctors">View All Doctors</a></li>
+            <li><a href="/view_patients">View All Patients</a></li>
+        </ul>
+
+        <br><br>
+        <a href="/logout" style="color:red;">Logout</a>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient Dashboard</title>
+</head>
+<body style="font-family:Arial; background:#f4f7fa;">
+
+    <h2 style="text-align:center; padding:20px; background:#0d6efd; color:white;">
+        Patient Dashboard
+    </h2>
+
+    <div style="padding:20px; max-width:600px; margin:auto;">
+
+        <h3>Your Details</h3>
+        <p>Age: <b>{{ patient.age }}</b></p>
+        <p>Gender: <b>{{ patient.gender }}</b></p>
+        <p>Contact: <b>{{ patient.contact }}</b></p>
+
+        <hr>
+
+        <h3>Options</h3>
+        <ul>
+            <li><a href="/book_appointment">Book Appointment</a></li>
+            <li><a href="/my_appointments">View My Appointments</a></li>
+            <li><a href="/treatment_history">View My Treatment History</a></li>
+        </ul>
+
+        <br><br>
+        <a href="/logout" style="color:red;">Logout</a>
+
+    </div>
+
+</body>
+</html>
