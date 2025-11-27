@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from extensions import db
-from models import User, Patient, Doctor
+from models import *
 
 app = Flask(__name__)
 app.secret_key = "abc-secret-key"
@@ -82,6 +82,139 @@ def admin():
                            doctors=doctors,
                            patients=patients)
 
+@app.route("/add_doctor", methods=["GET", "POST"])
+def add_doctor():
+    if "role" not in session or session["role"] != "admin":
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        name = request.form["name"]
+        specialization = request.form["specialization"]
+        experience = request.form["experience"]
+
+        if User.query.filter_by(username=username).first():
+            return "Username already taken. Pick another."
+        new_user = User(username=username, password=password, role="doctor")
+        db.session.add(new_user)
+        db.session.commit()
+
+        doctor = Doctor(user_id=new_user.id, name=name,
+                        specialization=specialization, experience=experience)
+        db.session.add(doctor)
+        db.session.commit()
+
+        return redirect(url_for("view_doctors"))
+    return render_template("add_doctor.html")
+
+
+@app.route("/view_doctors")
+def view_doctors():
+    if "role" not in session or session["role"] != "admin":
+        return redirect(url_for("login"))
+
+    doctor = Doctor.query.all()
+    doctors_with_user = []
+    for d in doctor:
+        u = User.query.filter_by(id=d.user_id).first()
+        doctors_with_user.append((d, u))
+
+    return render_template("view_doctors.html", doctors=doctors_with_user)
+
+@app.route("/search_doctors", methods=["GET", "POST"])
+def search_doctors():
+    if "role" not in session:
+        return redirect(url_for("login"))
+    doctors = []
+    q = ""
+    if request.method == "POST":
+        q = request.form.get("q", "").strip()
+        doctors = Doctor.query.filter(Doctor.name.contains(q) | Doctor.specialization.contains(q)).all()
+    return render_template("search_doctors.html", doctors=doctors, q=q)
+
+@app.route("/view_doctor/<int:doctor_id>")
+def view_doctor(doctor_id):
+    if "role" not in session:
+        return redirect(url_for("login"))
+    doctor = Doctor.query.filter_by(id=doctor_id).first()
+    avails = Availability.query.filter_by(doctor_id=doctor_id).all()
+    return render_template("view_doctor.html", doctor=doctor, avails=avails)
+
+@app.route("/book_appointment/<int:doctor_id>", methods=["GET", "POST"])
+def book_appointment(doctor_id):
+    if "role" not in session or session["role"] != "patient":
+        return redirect(url_for("login"))
+    user = User.query.filter_by(username=session["user"]).first()
+    patient = Patient.query.filter_by(user_id=user.id).first()
+    doctor = Doctor.query.filter_by(id=doctor_id).first()
+    avails = Availability.query.filter_by(doctor_id=doctor_id).all()
+    if request.method == "POST":
+        date = request.form["date"]
+        time = request.form["time"]
+        exists = Appointment.query.filter_by(doctor_id=doctor_id, date=date, time=time, status="booked").first()
+        if exists:
+            return "Slot already booked"
+        a = Appointment(patient_id=patient.id, doctor_id=doctor_id, date=date, time=time, status="booked")
+        db.session.add(a)
+        db.session.commit()
+        return redirect(url_for("my_appointments"))
+    return render_template("book_appointment.html", doctor=doctor, avails=avails)
+
+@app.route("/my_appointments")
+def my_appointments():
+    if "role" not in session or session["role"] != "patient":
+        return redirect(url_for("login"))
+    user = User.query.filter_by(username=session["user"]).first()
+    patient = Patient.query.filter_by(user_id=user.id).first()
+    appts = Appointment.query.filter_by(patient_id=patient.id).all()
+    doctors = {d.id: d for d in Doctor.query.all()}
+    return render_template("my_appointments.html", appts=appts, doctors=doctors)
+
+@app.route("/cancel_appointment/<int:appt_id>")
+def cancel_appointment(appt_id):
+    if "role" not in session or session["role"] != "patient":
+        return redirect(url_for("login"))
+    a = Appointment.query.filter_by(id=appt_id, status="booked").first()
+    if a:
+        a.status = "cancelled"
+        db.session.commit()
+    return redirect(url_for("my_appointments"))
+
+@app.route("/doctor_appointments")
+def doctor_appointments():
+    if "role" not in session or session["role"] != "doctor":
+        return redirect(url_for("login"))
+    user = User.query.filter_by(username=session["user"]).first()
+    doc = Doctor.query.filter_by(user_id=user.id).first()
+    appts = Appointment.query.filter_by(doctor_id=doc.id).all()
+    patients = {p.id: p for p in Patient.query.all()}
+    return render_template("doctor_appointments.html", appts=appts, patients=patients)
+
+@app.route("/mark_completed/<int:appt_id>", methods=["POST"])
+def mark_completed(appt_id):
+    if "role" not in session or session["role"] != "doctor":
+        return redirect(url_for("login"))
+    a = Appointment.query.filter_by(id=appt_id).first()
+    if a:
+        a.status = "completed"
+        db.session.commit()
+    return redirect(url_for("doctor_appointments"))
+
+@app.route("/add_availability", methods=["GET", "POST"])
+def add_availability():
+    if "role" not in session or session["role"] != "doctor":
+        return redirect(url_for("login"))
+    user = User.query.filter_by(username=session["user"]).first()
+    doc = Doctor.query.filter_by(user_id=user.id).first()
+    if request.method == "POST":
+        date = request.form["date"]
+        slot = request.form["slot"]
+        av = Availability(doctor_id=doc.id, date=date, slot=slot)
+        db.session.add(av)
+        db.session.commit()
+        return redirect(url_for("doctor_dashboard"))
+    return render_template("add_availability.html")
 
 # ---------------- DOCTOR DASHBOARD ----------------
 

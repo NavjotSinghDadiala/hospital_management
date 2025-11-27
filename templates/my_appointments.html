@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Appointments</title>
+</head>
+<body style="font-family:Arial;">
+    <h2>My Appointments</h2>
+    <table border="1" cellpadding="8" cellspacing="0">
+        <tr><th>ID</th><th>Doctor</th><th>Date</th><th>Time</th><th>Status</th><th>Action</th></tr>
+        {% for a in appts %}
+        <tr>
+            <td>{{ a.id }}</td>
+            <td>{{ doctors[a.doctor_id].name if doctors[a.doctor_id] else '---' }}</td>
+            <td>{{ a.date }}</td>
+            <td>{{ a.time }}</td>
+            <td>{{ a.status }}</td>
+            <td>
+                {% if a.status == 'booked' %}
+                <a href="{{ url_for('cancel_appointment', appt_id=a.id) }}">Cancel</a>
+                {% else %}
+                -
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="/patient_dashboard">Back</a>
+</body>
+</html>

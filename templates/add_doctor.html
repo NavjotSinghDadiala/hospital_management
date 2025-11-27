@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Doctor</title>
+</head>
+<body style="font-family:Arial; background:#f4f7fa; padding:20px;">
+
+    <h2 style="background:#0c6efd; color:white; padding:12px; text-align:center;">
+        Add Doctor
+    </h2>
+
+    <div style="max-width:600px; margin:20px auto; background:white; padding:18px; border-radius:6px;">
+        <form action="/add_doctor" method="post">
+            <label>Username (for login)</label><br>
+            <input type="text" name="username" required style="width:100%; padding:8px;"><br><br>
+
+            <label>Password</label><br>
+            <input type="text" name="password" required style="width:100%; padding:8px;"><br><br>
+
+            <label>Full Name</label><br>
+            <input type="text" name="name" required style="width:100%; padding:8px;"><br><br>
+
+            <label>Specialization</label><br>
+            <input type="text" name="specialization" required style="width:100%; padding:8px;"><br><br>
+
+            <label>Experience (e.g., 5 years)</label><br>
+            <input type="text" name="experience" style="width:100%; padding:8px;"><br><br>
+
+            <button type="submit" style="padding:10px 14px; background:#0c6efd; color:white; border:none; border-radius:6px;">
+                Add Doctor
+            </button>
+            <a href="/admin" style="margin-left:12px;">Cancel</a>
+        </form>
+    </div>
+
+</body>
+</html>

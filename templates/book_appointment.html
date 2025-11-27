@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Appointment</title>
+</head>
+<body style="font-family:Arial;">
+    <h2>Book with Dr. {{ doctor.name }}</h2>
+    <form method="post" action="">
+        <label>Date</label><br>
+        <input type="text" name="date" placeholder="YYYY-MM-DD" required><br><br>
+        <label>Time</label><br>
+        <input type="text" name="time" placeholder="HH:MM" required><br><br>
+        <button type="submit">Book</button>
+    </form>
+    <h4>Available slots</h4>
+    <ul>
+        {% for a in avails %}
+        <li>{{ a.date }} - {{ a.slot }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('view_doctor', doctor_id=doctor.id) }}">Back</a>
+</body>
+</html>
