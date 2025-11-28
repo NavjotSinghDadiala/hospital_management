@@ -109,37 +109,7 @@ def add_doctor():
     return render_template("add_doctor.html")
 
 
-@app.route("/view_doctors")
-def view_doctors():
-    if "role" not in session or session["role"] != "admin":
-        return redirect(url_for("login"))
 
-    doctor = Doctor.query.all()
-    doctors_with_user = []
-    for d in doctor:
-        u = User.query.filter_by(id=d.user_id).first()
-        doctors_with_user.append((d, u))
-
-    return render_template("view_doctors.html", doctors=doctors_with_user)
-
-@app.route("/search_doctors", methods=["GET", "POST"])
-def search_doctors():
-    if "role" not in session:
-        return redirect(url_for("login"))
-    doctors = []
-    q = ""
-    if request.method == "POST":
-        q = request.form.get("q", "").strip()
-        doctors = Doctor.query.filter(Doctor.name.contains(q) | Doctor.specialization.contains(q)).all()
-    return render_template("search_doctors.html", doctors=doctors, q=q)
-
-@app.route("/view_doctor/<int:doctor_id>")
-def view_doctor(doctor_id):
-    if "role" not in session:
-        return redirect(url_for("login"))
-    doctor = Doctor.query.filter_by(id=doctor_id).first()
-    avails = Availability.query.filter_by(doctor_id=doctor_id).all()
-    return render_template("view_doctor.html", doctor=doctor, avails=avails)
 
 @app.route("/book_appointment/<int:doctor_id>", methods=["GET", "POST"])
 def book_appointment(doctor_id):
@@ -201,20 +171,6 @@ def mark_completed(appt_id):
         db.session.commit()
     return redirect(url_for("doctor_appointments"))
 
-@app.route("/add_availability", methods=["GET", "POST"])
-def add_availability():
-    if "role" not in session or session["role"] != "doctor":
-        return redirect(url_for("login"))
-    user = User.query.filter_by(username=session["user"]).first()
-    doc = Doctor.query.filter_by(user_id=user.id).first()
-    if request.method == "POST":
-        date = request.form["date"]
-        slot = request.form["slot"]
-        av = Availability(doctor_id=doc.id, date=date, slot=slot)
-        db.session.add(av)
-        db.session.commit()
-        return redirect(url_for("doctor_dashboard"))
-    return render_template("add_availability.html")
 
 # ---------------- DOCTOR DASHBOARD ----------------
 
@@ -225,8 +181,113 @@ def doctor_dashboard():
 
     user = User.query.filter_by(username=session["user"]).first()
     doctor = Doctor.query.filter_by(user_id=user.id).first()
+    avails = Availability.query.filter_by(doctor_id=doctor.id).all()
 
-    return render_template("doctor_dashboard.html", doctor=doctor)
+    return render_template("doctor_dashboard.html", doctor=doctor , avails=avails)
+
+@app.route("/view_doctors", methods=["GET", "POST"])
+def view_doctors():
+    if "role" not in session or session["role"] != "admin":
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        doc_id = request.form["doc_id"]
+        name = request.form["name"]
+        specialization = request.form["specialization"]
+        experience = request.form["experience"]
+
+        d = Doctor.query.filter_by(id=doc_id).first()
+        if d:
+            d.name = name
+            d.specialization = specialization
+            d.experience = experience
+            db.session.commit()
+
+        return redirect("/view_doctors")
+
+    doctor_list = Doctor.query.all()
+    doctors_with_user = []
+    for d in doctor_list:
+        u = User.query.filter_by(id=d.user_id).first()
+        doctors_with_user.append((d, u))
+
+    return render_template("view_doctors.html", doctors=doctors_with_user)
+
+@app.route("/delete_doctor/<int:doc_id>")
+def delete_doctor(doc_id):
+    if "role" not in session or session["role"] != "admin":
+        return redirect(url_for("login"))
+
+    d = Doctor.query.filter_by(id=doc_id).first()
+    if d:
+        u = User.query.filter_by(id=d.user_id).first()
+        db.session.delete(d)
+        if u:
+            db.session.delete(u)
+        db.session.commit()
+
+    return redirect("/view_doctors")
+
+@app.route("/search_doctors", methods=["GET", "POST"])
+def search_doctors():
+    if "role" not in session:
+        return redirect(url_for("login"))
+    doctors = []
+    q = ""
+    if request.method == "POST":
+        q = request.form.get("q", "").strip()
+        doctors = Doctor.query.filter(Doctor.name.contains(q) | Doctor.specialization.contains(q)).all()
+    return render_template("search_doctors.html", doctors=doctors, q=q)
+
+@app.route("/view_doctor/<int:doctor_id>")
+def view_doctor(doctor_id):
+    if "role" not in session:
+        return redirect(url_for("login"))
+    doctor = Doctor.query.filter_by(id=doctor_id).first()
+    avails = Availability.query.filter_by(doctor_id=doctor_id).all()
+    return render_template("view_doctor.html", doctor=doctor, avails=avails)
+
+@app.route("/add_availability", methods=["GET", "POST"])
+def add_availability():
+    if "role" not in session or session["role"] != "doctor":
+        return redirect(url_for("login"))
+    user = User.query.filter_by(username=session["user"]).first()
+    doc = Doctor.query.filter_by(user_id=user.id).first()
+
+    slots = [
+        "09:00-10:00",
+        "10:00-11:00",
+        "11:00-12:00",
+        "12:00-13:00",
+        "14:00-15:00",
+        "15:00-16:00",
+        "16:00-17:00"
+    ]
+
+    if request.method == "POST":
+        date = request.form["date"]
+        slot = request.form["slot"]
+        av = Availability(doctor_id=doc.id, date=date, slot=slot)
+        db.session.add(av)
+        db.session.commit()
+        return redirect(url_for("doctor_dashboard"))
+    return render_template("add_availability.html" , slots=slots)
+
+@app.route("/delete_availability/<int:aid>")
+def delete_availability(aid):
+    if "role" not in session or session["role"] != "doctor":
+        return redirect(url_for("login"))
+
+    a = Availability.query.filter_by(id=aid).first()
+    if a:
+        db.session.delete(a)
+        db.session.commit()
+
+    return redirect("/doctor_dashboard")
+
+
+
+
 
 
 # ---------------- PATIENT DASHBOARD ----------------
@@ -241,6 +302,19 @@ def patient_dashboard():
 
     return render_template("patient_dashboard.html", patient=patient)
 
+@app.route("/view_patients")
+def view_patients():
+    if "role" not in session or session["role"] != "admin":
+        return redirect(url_for("login"))
+
+    users = User.query.filter_by(role="patient").all()
+    pts = []
+
+    for u in users:
+        p = Patient.query.filter_by(user_id=u.id).first()
+        pts.append((u, p))
+
+    return render_template("view_patients.html", patients=pts)
 
 
 if __name__ == "__main__":

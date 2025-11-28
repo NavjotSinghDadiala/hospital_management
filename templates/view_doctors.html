@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>All Doctors</title>
+    <title>Doctors</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
-<body class="p-4" style="font-family:Arial;">
+<body class="p-4">
 
 <h3>All Doctors</h3>
 
@@ -24,16 +24,42 @@
         <td>{{ d.specialization }}</td>
         <td>{{ d.experience }}</td>
         <td>
-            <a class="btn btn-sm btn-warning" href="/edit_doctor/{{ d.id }}">Edit</a>
-            <a class="btn btn-sm btn-danger" href="/delete_doctor/{{ d.id }}" 
-               onclick="return confirm('Delete this doctor?');">Delete</a>
+            <button class="btn btn-sm btn-primary" onclick="showEdit('{{ d.id }}')">Edit</button>
+            <a class="btn btn-sm btn-danger" href="/delete_doctor/{{ d.id }}">Delete</a>
         </td>
     </tr>
+
+    <tr id="edit{{ d.id }}" style="display:none;">
+        <td colspan="5">
+            <form method="post" class="border p-3">
+                <input type="hidden" name="doc_id" value="{{ d.id }}">
+
+                <label>Name</label>
+                <input class="form-control" type="text" name="name" value="{{ d.name }}">
+
+                <label class="mt-2">Specialization</label>
+                <input class="form-control" type="text" name="specialization" value="{{ d.specialization }}">
+
+                <label class="mt-2">Experience</label>
+                <input class="form-control" type="text" name="experience" value="{{ d.experience }}">
+
+                <button class="btn btn-success mt-3">Save</button>
+            </form>
+        </td>
+    </tr>
+
     {% endfor %}
 </table>
 
 <a href="/admin" class="btn btn-secondary">Back</a>
 
+<script>
+function showEdit(id){
+    var row = document.getElementById("edit"+id)
+    if(row.style.display=="none") row.style.display="table-row"
+    else row.style.display="none"
+}
+</script>
+
 </body>
 </html>
-    
