@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Doctors</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="p-4">
+
+<h3>Search Doctors</h3>
+
+<form method="post" class="mb-3" style="max-width:400px;">
+    <input type="text" class="form-control" name="q" value="{{ q }}"
+           placeholder="Search by name or specialization">
+</form>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Name</th>
+        <th>Specialization</th>
+        <th>Experience</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for d in doctors %}
+    <tr>
+        <td>{{ d.name }}</td>
+        <td>{{ d.specialization }}</td>
+        <td>{{ d.experience }}</td>
+        <td>
+            <a class="btn btn-sm btn-info" href="/view_doctor/{{ d.id }}">View</a>
+            <a class="btn btn-sm btn-success" href="/book_appointment/{{ d.id }}">Book</a>
+        </td>
+    </tr>
+    {% endfor %}
+
+    {% if doctors|length == 0 and q != "" %}
+    <tr>
+        <td colspan="4" class="text-center text-muted">No doctors found</td>
+    </tr>
+    {% endif %}
+</table>
+
+<a href="/patient_dashboard" class="btn btn-secondary">Back</a>
+
+</body>
+</html>

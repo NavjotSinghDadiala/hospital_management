@@ -8,6 +8,10 @@
 
 <h3>Add Availability</h3>
 
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
 <form method="post" style="max-width:400px;">
 
     <label>Date</label>

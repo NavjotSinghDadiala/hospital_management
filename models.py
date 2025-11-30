@@ -40,3 +40,10 @@ class Availability(db.Model):
     doctor_id = db.Column(db.Integer, nullable=False)
     date = db.Column(db.String(20))
     slot = db.Column(db.String(20))
+
+class Treatment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    appointment_id = db.Column(db.Integer, nullable=False)
+    diagnosis = db.Column(db.String(200))
+    prescription = db.Column(db.String(200))
+    notes = db.Column(db.String(300))
