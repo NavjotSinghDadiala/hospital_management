@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Patients</title>
+</head>
+<body style="font-family:Arial; background:#f4f7fa;">
+
+<h2 style="text-align:center; padding:20px; background:#0d6efd; color:white;">
+    My Patients
+</h2>
+
+<div style="padding:20px; max-width:600px; margin:auto;">
+
+    <table border="1" cellpadding="8" cellspacing="0" width="100%">
+        <tr style="background:#e1e5ea;">
+            <th>Name</th>
+            <th>Contact</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for u, p in patients %}
+        <tr>
+            <td>{{ u.username }}</td>
+            <td>{{ p.contact }}</td>
+            <td>
+                <a href="/view_patient/{{ u.id }}">view</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <br>
+    <a href="/doctor_dashboard" style="color:red;">Back</a>
+
+</div>
+
+</body>
+</html>

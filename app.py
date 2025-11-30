@@ -46,6 +46,8 @@ def login():
         user = User.query.filter_by(username=username, password=password).first()
 
         if user:
+            if user.is_valid == False:
+                return "Your account is not approved yet. Contact admin."
             session["user"] = user.username
             session["role"] = user.role
 
@@ -70,17 +72,59 @@ def logout():
 
 # ---------------- ADMIN DASHBOARD ----------------
 
-@app.route("/admin")
+@app.route("/admin", methods=["GET", "POST"])
 def admin():
     if "role" not in session or session["role"] != "admin":
         return redirect(url_for("login"))
 
-    doctors = Doctor.query.count()
-    patients = Patient.query.count()
+    q = ""
+    doctor_results = []
+    patient_results = []
+
+    if request.method == "POST":
+        q = request.form["q"]
+
+        doctor_results = Doctor.query.filter(
+            Doctor.name.contains(q) | Doctor.specialization.contains(q)
+        ).all()
+
+        users = User.query.filter(User.username.contains(q), User.role == "patient").all()
+        for u in users:
+            p = Patient.query.filter_by(user_id=u.id).first()
+            patient_results.append((u, p))
+
+    doctors = Doctor.query.all()
+    patients = Patient.query.all()
 
     return render_template("admin_dashboard.html",
+                           q=q,
                            doctors=doctors,
-                           patients=patients)
+                           patients=patients,
+                           doctor_results=doctor_results,
+                           patient_results=patient_results)
+
+
+@app.route("/blacklist/<int:uid>")
+def blacklist(uid):
+    if "role" not in session or session["role"] != "admin":
+        return redirect(url_for("login"))
+
+    u = User.query.filter_by(id=uid).first()
+    if u:
+        u.is_valid = False
+        db.session.commit()
+
+    return redirect("/admin")
+
+@app.router("/unblacklist/<int:uid>")
+def unblacklist(uid):
+    if "role" not in session or session["role"]!= "admin":
+        return redirect(url_for("login"))
+    u = User.query.filter_by(id=uid).first()
+    if u:
+        u.is_valid = True
+        db.session.commit()
+    return redirect("/admin")
 
 @app.route("/add_doctor", methods=["GET", "POST"])
 def add_doctor():
@@ -375,16 +419,48 @@ def complete_appointment(aid):
 
 @app.route("/cancel_appointment/<int:aid>")
 def cancel_appointment(aid):
-    if "role" not in session or session["role"] != "doctor":
-        return redirect(url_for("login"))
+    if "role" not in session:
+        return redirect("/login")
 
     a = Appointment.query.filter_by(id=aid).first()
-    if a:
-        a.status = "cancelled"
+    if not a:
+        return redirect("/login")
+
+    if session["role"] == "patient":
+        if a.status == "Booked":
+            a.status = "Cancelled"
+            db.session.commit()
+        return redirect("/my_appointments")
+
+    if session["role"] == "doctor":
+        a.status = "Cancelled"
         db.session.commit()
+        return redirect("/doctor_dashboard")
 
-    return redirect("/doctor_dashboard")
+    return redirect("/login")
 
+@app.route("/doctor_patients")
+def doctor_patients():
+    if "role" not in session or session["role"] != "doctor":
+        return redirect("/login")
+
+    user = User.query.filter_by(username=session["user"]).first()
+    doctor = Doctor.query.filter_by(user_id=user.id).first()
+
+    apps = Appointment.query.filter_by(doctor_id=doctor.id).all()
+
+    p_ids = []
+    for a in apps:
+        if a.patient_id not in p_ids:
+            p_ids.append(a.patient_id)
+
+    patients = []
+    for pid in p_ids:
+        p = Patient.query.filter_by(id=pid).first()
+        u = User.query.filter_by(id=p.user_id).first()
+        patients.append((u, p))
+
+    return render_template("doctor_patients.html", patients=patients)
 
 
 
@@ -453,7 +529,6 @@ def treatment_history():
         full_list.append((a, t, d, u))
 
     return render_template("treatment_history.html", full_list=full_list)
-
 
 
 

@@ -9,11 +9,84 @@
         Admin Dashboard
     </h2>
 
-    <div style="padding:20px; max-width:600px; margin:auto;">
+    <div style="padding:20px; max-width:800px; margin:auto;">
+
+        <form method="post" style="max-width:300px; margin-bottom:20px;">
+            <input type="text" name="q" value="{{ q }}" placeholder="Search doctor or patient"
+                   style="width:100%; padding:8px;">
+        </form>
+
+        {% if doctor_results or patient_results %}
+        <h3>Search Results</h3>
+
+        <h4>Doctors</h4>
+        <table border="1" cellpadding="8" cellspacing="0" width="100%">
+            <tr style="background:#e1e5ea;">
+                <th>Name</th>
+                <th>Specialization</th>
+                <th>Actions</th>
+            </tr>
+
+            {% for d, u in doctor_results %}
+            <tr>
+                <td>{{ d.name }}</td>
+                <td>{{ d.specialization }}</td>
+                <td>
+                    <a href="/view_doctor/{{ d.id }}">view</a> |
+
+                    {% if u.is_valid %}
+                        <a href="/blacklist/{{ u.id }}" style="color:orange;">blacklist</a> |
+                    {% else %}
+                        <a href="/unblacklist/{{ u.id }}" style="color:green;">unblacklist</a> |
+                    {% endif %}
+
+                    <a href="/delete_doctor/{{ d.id }}" style="color:red;">delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+
+            {% if doctor_results|length == 0 %}
+            <tr><td colspan="3" style="text-align:center; color:gray;">No doctors found</td></tr>
+            {% endif %}
+        </table>
+
+        <h4 style="margin-top:20px;">Patients</h4>
+        <table border="1" cellpadding="8" cellspacing="0" width="100%">
+            <tr style="background:#e1e5ea;">
+                <th>Username</th>
+                <th>Contact</th>
+                <th>Actions</th>
+            </tr>
+
+            {% for u, p in patient_results %}
+            <tr>
+                <td>{{ u.username }}</td>
+                <td>{{ p.contact }}</td>
+                <td>
+                    <a href="/view_patient/{{ u.id }}">view</a> |
+
+                    {% if u.is_valid %}
+                        <a href="/blacklist/{{ u.id }}" style="color:orange;">blacklist</a> |
+                    {% else %}
+                        <a href="/unblacklist/{{ u.id }}" style="color:green;">unblacklist</a> |
+                    {% endif %}
+
+                    <a href="/delete_patient/{{ u.id }}" style="color:red;">delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+
+            {% if patient_results|length == 0 %}
+            <tr><td colspan="3" style="text-align:center; color:gray;">No patients found</td></tr>
+            {% endif %}
+        </table>
+
+        <hr style="margin:30px 0;">
+        {% endif %}
 
         <h3>Overview</h3>
-        <p>Total Doctors: <b>{{ doctors }}</b></p>
-        <p>Total Patients: <b>{{ patients }}</b></p>
+        <p>Total Doctors: <b>{{ doctors|length }}</b></p>
+        <p>Total Patients: <b>{{ patients|length }}</b></p>
 
         <hr>
 

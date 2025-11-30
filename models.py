@@ -5,6 +5,7 @@ class User(db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
     role = db.Column(db.String(20), nullable=False)
+    is_valid = db.Column(db.Boolean, default=True)
 
 class Patient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -41,9 +42,4 @@ class Availability(db.Model):
     date = db.Column(db.String(20))
     slot = db.Column(db.String(20))
 
-class Treatment(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    appointment_id = db.Column(db.Integer, nullable=False)
-    diagnosis = db.Column(db.String(200))
-    prescription = db.Column(db.String(200))
-    notes = db.Column(db.String(300))
+
