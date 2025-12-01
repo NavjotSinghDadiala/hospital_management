@@ -4,16 +4,18 @@
     <title>Doctors</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
-<body class="p-4">
+<body class="bg-light p-4">
 
-<h3>All Doctors</h3>
+<div class="container">
+<h3 class="mb-3 text-primary">All Doctors</h3>
 
-<table class="table table-bordered">
+<table class="table table-bordered table-striped bg-white">
     <tr>
         <th>Username</th>
         <th>Name</th>
         <th>Specialization</th>
         <th>Experience</th>
+        <th>Status</th>
         <th>Actions</th>
     </tr>
 
@@ -24,26 +26,43 @@
         <td>{{ d.specialization }}</td>
         <td>{{ d.experience }}</td>
         <td>
+            {% if u.is_valid %}
+                <span style="color:green;font-weight:bold;">Active</span>
+            {% else %}
+                <span style="color:red;font-weight:bold;">Blacklisted</span>
+            {% endif %}
+        </td>
+        <td>
             <button class="btn btn-sm btn-primary" onclick="showEdit('{{ d.id }}')">Edit</button>
-            <a class="btn btn-sm btn-danger" href="/delete_doctor/{{ d.id }}">Delete</a>
+            {% if u.is_valid %}
+                <a class="btn btn-sm btn-warning" href="/blacklist/{{ u.id }}">Blacklist</a>
+            {% else %}
+                <a class="btn btn-sm btn-success" href="/unblacklist/{{ u.id }}">Unblacklist</a>
+            {% endif %}
+            <a class="btn btn-sm btn-danger" href="/delete_doctor/{{ d.id }}" onclick="return confirm('Are you sure?')">Delete</a>
         </td>
     </tr>
 
-    <tr id="edit{{ d.id }}" style="display:none;">
-        <td colspan="5">
-            <form method="post" class="border p-3">
+    <tr id="edit{{ d.id }}" class="table-light" style="display:none;">
+        <td colspan="6">
+            <form method="post" class="row g-2">
                 <input type="hidden" name="doc_id" value="{{ d.id }}">
 
-                <label>Name</label>
-                <input class="form-control" type="text" name="name" value="{{ d.name }}">
-
-                <label class="mt-2">Specialization</label>
-                <input class="form-control" type="text" name="specialization" value="{{ d.specialization }}">
-
-                <label class="mt-2">Experience</label>
-                <input class="form-control" type="text" name="experience" value="{{ d.experience }}">
-
-                <button class="btn btn-success mt-3">Save</button>
+                <div class="col-md-4">
+                    <label class="form-label">Name</label>
+                    <input class="form-control" type="text" name="name" value="{{ d.name }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Specialization</label>
+                    <input class="form-control" type="text" name="specialization" value="{{ d.specialization }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Experience</label>
+                    <input class="form-control" type="text" name="experience" value="{{ d.experience }}">
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-success mt-2">Save</button>
+                </div>
             </form>
         </td>
     </tr>
@@ -51,13 +70,14 @@
     {% endfor %}
 </table>
 
-<a href="/admin" class="btn btn-secondary">Back</a>
+<a href="/admin" class="btn btn-secondary mt-3">Back</a>
+</div>
 
 <script>
 function showEdit(id){
-    var row = document.getElementById("edit"+id)
-    if(row.style.display=="none") row.style.display="table-row"
-    else row.style.display="none"
+    var row = document.getElementById("edit"+id);
+    if(row.style.display=="none") row.style.display="table-row";
+    else row.style.display="none";
 }
 </script>
 

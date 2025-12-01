@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 30px;
+            color: #1f2933;
+        }
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 500px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        h3 {
+            color: #0d6efd;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #e4e7eb;
+            text-align: left;
+        }
+        th {
+            width: 40%;
+            background: #eef2ff;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #fff;
+            margin-top: 15px;
+        }
+        .primary { background: #0d6efd; }
+        .secondary { background: #6c757d; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h3>Patient Details</h3>
+
+    <table>
+        <tr>
+            <th>Username</th>
+            <td>{{ user.username }}</td>
+        </tr>
+        <tr>
+            <th>Age</th>
+            <td>{{ patient.age if patient.age else '---' }}</td>
+        </tr>
+        <tr>
+            <th>Gender</th>
+            <td>{{ patient.gender if patient.gender else '---' }}</td>
+        </tr>
+        <tr>
+            <th>Contact</th>
+            <td>{{ patient.contact if patient.contact else '---' }}</td>
+        </tr>
+        <tr>
+            <th>Status</th>
+            <td>
+                {% if user.is_valid %}
+                    <span style="color:green;font-weight:bold;">Active</span>
+                {% else %}
+                    <span style="color:red;font-weight:bold;">Blacklisted</span>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+
+    <a href="/edit_patient/{{ user.id }}" class="btn primary">Edit Patient</a>
+    <a href="/view_patients" class="btn secondary">Back</a>
+</div>
+
+</body>
+</html>
+

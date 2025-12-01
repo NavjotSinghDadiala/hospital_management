@@ -2,14 +2,55 @@
 <html>
 <head>
     <title>All Appointments</title>
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f6fb;
+            margin: 0;
+            padding: 30px;
+            color: #1f2933;
+        }
+        h3 {
+            color: #0d6efd;
+            margin-bottom: 10px;
+        }
+        h4 {
+            margin-top: 25px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #edf0f7;
+            text-align: left;
+        }
+        th {
+            background: #eef2ff;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 6px;
+            background: #6c757d;
+            color: #fff;
+            text-decoration: none;
+            margin-top: 15px;
+        }
+    </style>
 </head>
-<body class="p-4">
+<body>
 
 <h3>All Appointments</h3>
 
-<table class="table table-bordered">
+<h4 style="color:green;">Upcoming Appointments ({{ upcoming_list|length }})</h4>
+<table>
     <tr>
         <th>Patient</th>
         <th>Doctor</th>
@@ -18,7 +59,7 @@
         <th>Status</th>
     </tr>
 
-    {% for a, p, pu, d, du in full_list %}
+    {% for a, p, pu, d, du in upcoming_list %}
     <tr>
         <td>{{ pu.username }}</td>
         <td>{{ du.username }} ({{ d.specialization }})</td>
@@ -27,9 +68,38 @@
         <td>{{ a.status }}</td>
     </tr>
     {% endfor %}
+    
+    {% if upcoming_list|length == 0 %}
+    <tr><td colspan="5" style="text-align:center; color:gray;">No upcoming appointments</td></tr>
+    {% endif %}
 </table>
 
-<a href="/admin" class="btn btn-secondary">Back</a>
+<h4 style="color:#0d6efd;">Past Appointments ({{ past_list|length }})</h4>
+<table>
+    <tr>
+        <th>Patient</th>
+        <th>Doctor</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Status</th>
+    </tr>
+
+    {% for a, p, pu, d, du in past_list %}
+    <tr>
+        <td>{{ pu.username }}</td>
+        <td>{{ du.username }} ({{ d.specialization }})</td>
+        <td>{{ a.date }}</td>
+        <td>{{ a.time }}</td>
+        <td>{{ a.status }}</td>
+    </tr>
+    {% endfor %}
+    
+    {% if past_list|length == 0 %}
+    <tr><td colspan="5" style="text-align:center; color:gray;">No past appointments</td></tr>
+    {% endif %}
+</table>
+
+<a href="/admin" class="btn">Back</a>
 
 </body>
 </html>

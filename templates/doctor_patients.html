@@ -1,38 +1,95 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>My Patients</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 30px;
+            color: #1f2933;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: #0d6efd;
+            color: #fff;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #edf0f7;
+            text-align: left;
+        }
+
+        th {
+            background: #eef2ff;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background: #0d6efd;
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .back {
+            background: #dc3545;
+        }
+    </style>
 </head>
-<body style="font-family:Arial; background:#f4f7fa;">
 
-<h2 style="text-align:center; padding:20px; background:#0d6efd; color:white;">
-    My Patients
-</h2>
+<body>
 
-<div style="padding:20px; max-width:600px; margin:auto;">
+    <div class="header">
+        <h2>My Patients</h2>
+    </div>
 
-    <table border="1" cellpadding="8" cellspacing="0" width="100%">
-        <tr style="background:#e1e5ea;">
+    <table>
+        <tr>
             <th>Name</th>
             <th>Contact</th>
             <th>Actions</th>
         </tr>
 
-        {% for u, p in patients %}
+        {% for u, p, aid in patients %}
         <tr>
             <td>{{ u.username }}</td>
-            <td>{{ p.contact }}</td>
+            <td>{{ p.contact if p.contact else '---' }}</td>
             <td>
-                <a href="/view_patient/{{ u.id }}">view</a>
+                <a href="/doctor_patient_history/{{ p.id }}" class="btn">View Full History</a>
+                {% if aid %}
+                <a href="/add_treatment/{{ aid }}" class="btn" style="background:#28a745; margin-left:8px;">Add
+                    Treatment</a>
+                {% else %}
+                <a href="/doctor_patient_history/{{ p.id }}" class="btn"
+                    style="background:#6c757d; margin-left:8px;">Add Treatment</a>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
     </table>
 
-    <br>
-    <a href="/doctor_dashboard" style="color:red;">Back</a>
-
-</div>
+    <a href="/doctor_dashboard" class="btn back" style="margin-top:15px; display:inline-block;">Back</a>
 
 </body>
+
 </html>

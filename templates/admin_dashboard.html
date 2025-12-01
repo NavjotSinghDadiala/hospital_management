@@ -2,18 +2,23 @@
 <html>
 <head>
     <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
-<body style="font-family:Arial; background:#f4f7fa;">
+<body class="bg-light">
 
-    <h2 style="text-align:center; padding:20px; background:#0c6efd; color:white;">
-        Admin Dashboard
-    </h2>
+    <div class="bg-primary text-white text-center py-3 mb-4">
+        <h2 class="m-0">Admin Dashboard</h2>
+    </div>
 
-    <div style="padding:20px; max-width:800px; margin:auto;">
+    <div class="container mb-4">
 
-        <form method="post" style="max-width:300px; margin-bottom:20px;">
-            <input type="text" name="q" value="{{ q }}" placeholder="Search doctor or patient"
-                   style="width:100%; padding:8px;">
+        <form method="post" class="mb-4">
+            <div class="row g-2">
+                <div class="col-sm-6 col-md-4">
+                    <input type="text" name="q" value="{{ q }}" class="form-control"
+                           placeholder="Search doctor or patient">
+                </div>
+            </div>
         </form>
 
         {% if doctor_results or patient_results %}
@@ -84,22 +89,43 @@
         <hr style="margin:30px 0;">
         {% endif %}
 
-        <h3>Overview</h3>
-        <p>Total Doctors: <b>{{ doctors|length }}</b></p>
-        <p>Total Patients: <b>{{ patients|length }}</b></p>
 
-        <hr>
-
-        <h3>Quick Actions</h3>
+        <h3>List of Doctors</h3>
         <ul>
-            <li><a href="/add_doctor">Add Doctor</a></li>
-            <li><a href="/view_doctors">View All Doctors</a></li>
-            <li><a href="/view_patients">View All Patients</a></li>
-            <li><a href="/view_appointments">View All Appointments</a></li>
+        {% for d in doctors %}
+            <li>{{ d.name }}</li>
+        {% endfor %}
         </ul>
 
-        <br><br>
-        <a href="/logout" style="color:red;">Logout</a>
+        <h3>List of Patients</h3>
+        <ul>
+        {% for p in patients %}   
+            <li>{{ p.name }}</li>
+        {% endfor %}
+        </ul>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <h4>Overview</h4>
+                <p class="mb-1">Total Doctors: <strong>{{ doctors|length }}</strong></p>
+                <p class="mb-1">Total Patients: <strong>{{ patients|length }}</strong></p>
+                <p>Total Appointments: <strong>{{ appointments|length }}</strong></p>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <h4>Quick Actions</h4>
+                <ul class="mb-0">
+                    <li><a href="/add_doctor">Add Doctor</a></li>
+                    <li><a href="/view_doctors">View All Doctors</a></li>
+                    <li><a href="/view_patients">View All Patients</a></li>
+                    <li><a href="/view_appointments">View All Appointments</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <a href="/logout" class="btn btn-danger">Logout</a>
 
     </div>
 

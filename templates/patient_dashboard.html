@@ -1,34 +1,117 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Patient Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f6fb;
+            color: #1f2933;
+        }
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: #0d6efd;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 850px;
+            margin: auto;
+            padding: 0 20px 40px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        h3 {
+            margin-top: 0;
+            color: #0d6efd;
+        }
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .tag {
+            background: #eef2ff;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #fff;
+            background: #0d6efd;
+            margin-top: 10px;
+        }
+        .btn.secondary { background: #17a2b8; }
+        .btn.success { background: #28a745; }
+        .btn.warning { background: #ff9f43; }
+        ul {
+            padding-left: 18px;
+        }
+    </style>
 </head>
+<body>
 
-<body style="font-family:Arial; background:#f4f7fa;">
+    <div class="header">
+        <h2>Patient Dashboard</h2>
+    </div>
 
-    <h2 style="text-align:center; padding:20px; background:#0d6efd; color:white;">
-        Patient Dashboard
-    </h2>
+    <div class="container">
 
-    <div style="padding:20px; max-width:600px; margin:auto;">
+        <div class="card">
+            <h3>Your Details</h3>
+            <p>Age: <b>{{ patient.age if patient.age else '---' }}</b></p>
+            <p>Gender: <b>{{ patient.gender if patient.gender else '---' }}</b></p>
+            <p>Contact: <b>{{ patient.contact if patient.contact else '---' }}</b></p>
+            <a href="/edit_my_profile" class="btn">Edit Profile</a>
+        </div>
 
-        <h3>Your Details</h3>
-        <p>Age: <b>{{ patient.age }}</b></p>
-        <p>Gender: <b>{{ patient.gender }}</b></p>
-        <p>Contact: <b>{{ patient.contact }}</b></p>
+        <div class="card">
+            <h3>Available Specializations/Departments</h3>
+            {% if specializations %}
+            <div class="tags">
+                {% for spec in specializations %}
+                <span class="tag">{{ spec }}</span>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="color:gray;">No specializations available</p>
+            {% endif %}
+        </div>
 
-        <hr>
+        <div class="card">
+            <h3>Doctors Available (Next 7 Days)</h3>
+            <p><b>{{ doctors_count }}</b> doctors have available slots in the next 7 days</p>
+            <a href="/search_doctors" class="btn success">View & Book Appointment</a>
+        </div>
 
-        <h3>Options</h3>
-        <ul>
-            <li><a href="/search_doctors">Book Appointment</a></li>
-            <li><a href="/my_appointments">View My Appointments</a></li>
-            <li><a href="/treatment_history">View My Treatment History</a></li>
-        </ul>
+        <div class="card">
+            <h3>My Appointments</h3>
+            <p><b>Upcoming:</b> {{ upcoming_count }} appointment(s)</p>
+            <p><b>Past:</b> {{ past_count }} appointment(s)</p>
+            <a href="/my_appointments" class="btn secondary">View All Appointments</a>
+        </div>
 
-        <br><br>
-        <a href="/logout" style="color:red;">Logout</a>
+        <div class="card">
+            <h3>Quick Actions</h3>
+            <ul>
+                <li><a href="/search_doctors">Search & Book Appointment</a></li>
+                <li><a href="/my_appointments">View My Appointments</a></li>
+                <li><a href="/treatment_history">View My Treatment History</a></li>
+            </ul>
+        </div>
+
+        <a href="/logout" class="btn warning">Logout</a>
 
     </div>
 

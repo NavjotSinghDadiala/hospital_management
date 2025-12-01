@@ -2,35 +2,81 @@
 <html>
 <head>
     <title>Doctor Details</title>
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 30px;
+            color: #1f2933;
+        }
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            max-width: 600px;
+        }
+        h3, h4 {
+            margin-top: 0;
+            color: #0d6efd;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #e4e7eb;
+            text-align: left;
+        }
+        th {
+            background: #eef2ff;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #fff;
+            margin-right: 8px;
+        }
+        .success { background: #28a745; }
+        .secondary { background: #6c757d; }
+    </style>
 </head>
-<body class="p-4">
+<body>
 
-<h3>Doctor Details</h3>
+<div class="card">
+    <h3>Doctor Details</h3>
+    <p><b>Name:</b> {{ doctor.name }}</p>
+    <p><b>Specialization:</b> {{ doctor.specialization }}</p>
+    <p><b>Experience:</b> {{ doctor.experience }}</p>
+</div>
 
-<p><b>Name:</b> {{ doctor.name }}</p>
-<p><b>Specialization:</b> {{ doctor.specialization }}</p>
-<p><b>Experience:</b> {{ doctor.experience }}</p>
+<div class="card">
+    <h4>Available Slots</h4>
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Slot</th>
+        </tr>
 
-<h4 class="mt-4">Available Slots</h4>
+        {% for a in avails %}
+        <tr>
+            <td>{{ a.date }}</td>
+            <td>{{ a.slot }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 
-<table class="table table-bordered">
-    <tr>
-        <th>Date</th>
-        <th>Slot</th>
-    </tr>
-
-    {% for a in avails %}
-    <tr>
-        <td>{{ a.date }}</td>
-        <td>{{ a.slot }}</td>
-    </tr>
-    {% endfor %}
-</table>
-
-<a href="/book_appointment/{{ doctor.id }}" class="btn btn-success">Book Appointment</a>
-<a href="/search_doctors" class="btn btn-secondary">Back</a>
+    <div style="margin-top:15px;">
+        <a href="/book_appointment/{{ doctor.id }}" class="btn success">Book Appointment</a>
+        <a href="/search_doctors" class="btn secondary">Back</a>
+    </div>
+</div>
 
 </body>
 </html>

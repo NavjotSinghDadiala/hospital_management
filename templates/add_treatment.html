@@ -2,28 +2,76 @@
 <html>
 <head>
     <title>Add Treatment</title>
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 30px;
+            color: #1f2933;
+        }
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 500px;
+            margin: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        h3 {
+            text-align: center;
+            color: #0d6efd;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            margin-top: 6px;
+            font-family: inherit;
+        }
+        textarea {
+            resize: vertical;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #fff;
+            background: #0d6efd;
+            border: none;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+        .secondary { background: #6c757d; }
+    </style>
 </head>
-<body class="p-4">
+<body>
 
-<h3>Add Treatment</h3>
+<div class="card">
+    <h3>Add Treatment</h3>
 
-<form method="post" style="max-width:500px;">
+    <form method="post">
 
-    <label>Diagnosis</label>
-    <input class="form-control" type="text" name="diagnosis" required>
+        <label>Diagnosis</label>
+        <input type="text" name="diagnosis" required>
 
-    <label class="mt-3">Prescription</label>
-    <input class="form-control" type="text" name="prescription" required>
+        <label>Prescription</label>
+        <input type="text" name="prescription" required>
 
-    <label class="mt-3">Notes</label>
-    <textarea class="form-control" name="notes" rows="3"></textarea>
+        <label>Notes</label>
+        <textarea name="notes" rows="3"></textarea>
 
-    <button class="btn btn-primary mt-3">Save</button>
-</form>
-
-<a class="btn btn-secondary mt-3" href="/doctor_dashboard">Back</a>
+        <button class="btn" type="submit">Save</button>
+        <a class="btn secondary" href="/doctor_dashboard">Back</a>
+    </form>
+</div>
 
 </body>
 </html>

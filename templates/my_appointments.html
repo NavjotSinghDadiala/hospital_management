@@ -2,12 +2,65 @@
 <html>
 <head>
     <title>My Appointments</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f6fb;
+            margin: 0;
+            padding: 30px;
+            color: #1f2933;
+        }
+        h2 {
+            margin-bottom: 10px;
+        }
+        h4 {
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #edf0f7;
+            text-align: left;
+        }
+        th {
+            background: #eef2ff;
+        }
+        .btn {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #fff;
+            font-size: 13px;
+        }
+        .danger { background: #dc3545; }
+        .info   { background: #17a2b8; }
+        .secondary { background: #6c757d; }
+        .muted { color: #9aa5b1; }
+    </style>
 </head>
-<body style="font-family:Arial;">
+<body>
     <h2>My Appointments</h2>
-    <table border="1" cellpadding="8" cellspacing="0">
-        <tr><th>ID</th><th>Doctor</th><th>Date</th><th>Time</th><th>Status</th><th>Action</th></tr>
-        {% for a in appts %}
+    
+    <h4 style="color:green;">Upcoming Appointments ({{ upcoming_appts|length }})</h4>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        {% for a in upcoming_appts %}
         <tr>
             <td>{{ a.id }}</td>
             <td>{{ doctors[a.doctor_id].name if doctors[a.doctor_id] else '---' }}</td>
@@ -16,14 +69,49 @@
             <td>{{ a.status }}</td>
             <td>
                 {% if a.status == 'booked' %}
-                <a href="{{ url_for('cancel_appointment', appt_id=a.id) }}">Cancel</a>
+                <a href="/cancel_appointment/{{ a.id }}" class="btn danger">Cancel</a>
                 {% else %}
-                -
+                <span class="muted">-</span>
                 {% endif %}
             </td>
         </tr>
         {% endfor %}
+        {% if upcoming_appts|length == 0 %}
+        <tr><td colspan="6" style="text-align:center; color:gray;">No upcoming appointments</td></tr>
+        {% endif %}
     </table>
-    <a href="/patient_dashboard">Back</a>
+    
+    <h4 style="color:#0d6efd;">Past Appointments ({{ past_appts|length }})</h4>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        {% for a in past_appts %}
+        <tr>
+            <td>{{ a.id }}</td>
+            <td>{{ doctors[a.doctor_id].name if doctors[a.doctor_id] else '---' }}</td>
+            <td>{{ a.date }}</td>
+            <td>{{ a.time }}</td>
+            <td>{{ a.status }}</td>
+            <td>
+                {% if a.status == 'completed' %}
+                <a href="/treatment_history" class="btn info">View Treatment</a>
+                {% else %}
+                <span class="muted">-</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        {% if past_appts|length == 0 %}
+        <tr><td colspan="6" style="text-align:center; color:gray;">No past appointments</td></tr>
+        {% endif %}
+    </table>
+    
+    <a href="/patient_dashboard" class="btn secondary" style="margin-top:15px;">Back</a>
 </body>
 </html>

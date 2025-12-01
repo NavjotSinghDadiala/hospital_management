@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Doctor Appointments</title>
 </head>
+
 <body style="font-family:Arial;">
     <h2>Appointments</h2>
     <table border="1" cellpadding="8" cellspacing="0">
-        <tr><th>ID</th><th>Patient</th><th>Date</th><th>Time</th><th>Status</th><th>Action</th></tr>
+        <tr>
+            <th>ID</th>
+            <th>Patient</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
         {% for a in appts %}
         <tr>
             <td>{{ a.id }}</td>
@@ -19,6 +28,8 @@
                 <form method="post" action="{{ url_for('mark_completed', appt_id=a.id) }}">
                     <button type="submit">Mark Completed</button>
                 </form>
+                {% elif a.status == 'completed' %}
+                <a href="{{ url_for('add_treatment', aid=a.id) }}"><button>Add Treatment</button></a>
                 {% else %}
                 -
                 {% endif %}
@@ -28,4 +39,5 @@
     </table>
     <a href="/doctor_dashboard">Back</a>
 </body>
+
 </html>

@@ -2,31 +2,84 @@
 <html>
 <head>
     <title>Book Appointment</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 30px;
+            color: #1f2933;
+        }
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 420px;
+            margin: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        h3 {
+            text-align: center;
+            color: #0d6efd;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            margin-top: 6px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #fff;
+            background: #0d6efd;
+            border: none;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+        .secondary {
+            background: #6c757d;
+        }
+        .alert {
+            background: #ffe0e0;
+            color: #b30000;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
-<body class="p-4">
+<body>
 
-<h3>Book Appointment with Dr. {{ doctor.name }}</h3>
+<div class="card">
+    <h3>Book Appointment with Dr. {{ doctor.name }}</h3>
 
-{% if error %}
-<div class="alert alert-danger">{{ error }}</div>
-{% endif %}
+    {% if error %}
+    <div class="alert">{{ error }}</div>
+    {% endif %}
 
-<form method="post" style="max-width:400px;">
+    <form method="post">
+        <label>Select Slot</label>
+        <select name="slot" required>
+            {% for a in avails %}
+            <option value="{{ a.date }} | {{ a.slot }}">
+                {{ a.date }} — {{ a.slot }}
+            </option>
+            {% endfor %}
+        </select>
 
-    <label>Select Slot</label>
-    <select name="slot" class="form-control" required>
-        {% for a in avails %}
-        <option value="{{ a.date }} | {{ a.slot }}">
-            {{ a.date }} — {{ a.slot }}
-        </option>
-        {% endfor %}
-    </select>
-
-    <button class="btn btn-primary mt-3">Book</button>
-</form>
-
-<a href="/view_doctor/{{ doctor.id }}" class="btn btn-secondary mt-3">Back</a>
+        <button class="btn" type="submit">Book</button>
+        <a href="/view_doctor/{{ doctor.id }}" class="btn secondary">Back</a>
+    </form>
+</div>
 
 </body>
 </html>

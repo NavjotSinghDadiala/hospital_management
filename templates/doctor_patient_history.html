@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 30px;
+            color: #1f2933;
+        }
+        h3, h4 {
+            color: #0d6efd;
+        }
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 520px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #edf0f7;
+            text-align: left;
+        }
+        th {
+            background: #eef2ff;
+        }
+        .badge {
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #fff;
+        }
+        .warning { background: #ff9f43; }
+        .success { background: #28a745; }
+        .danger { background: #dc3545; }
+        .secondary { background: #6c757d; }
+        .btn {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #fff;
+            background: #6c757d;
+            margin-top: 15px;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<h3>Patient History</h3>
+
+<div class="card">
+    <h4>Patient Information</h4>
+    <p><b>Name:</b> {{ patient_user.username }}</p>
+    <p><b>Age:</b> {{ patient.age if patient.age else '---' }}</p>
+    <p><b>Gender:</b> {{ patient.gender if patient.gender else '---' }}</p>
+    <p><b>Contact:</b> {{ patient.contact if patient.contact else '---' }}</p>
+</div>
+
+<div>
+    <h4>Complete Treatment History</h4>
+
+    {% if full_history %}
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Diagnosis</th>
+            <th>Prescription</th>
+            <th>Notes</th>
+        </tr>
+        
+        {% for a, t in full_history %}
+        <tr>
+            <td>{{ a.date }}</td>
+            <td>{{ a.time }}</td>
+            <td>
+                {% if a.status == 'booked' %}
+                    <span class="badge warning">Booked</span>
+                {% elif a.status == 'completed' %}
+                    <span class="badge success">Completed</span>
+                {% elif a.status == 'cancelled' %}
+                    <span class="badge danger">Cancelled</span>
+                {% else %}
+                    <span class="badge secondary">{{ a.status }}</span>
+                {% endif %}
+            </td>
+            <td>{{ t.diagnosis if t else '---' }}</td>
+            <td>{{ t.prescription if t else '---' }}</td>
+            <td>{{ t.notes if t else '---' }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p style="color:gray;">No appointment history found for this patient.</p>
+    {% endif %}
+</div>
+
+<a href="/doctor_patients" class="btn">Back to My Patients</a>
+<a href="/doctor_dashboard" class="btn">Back to Dashboard</a>
+
+</body>
+</html>
+

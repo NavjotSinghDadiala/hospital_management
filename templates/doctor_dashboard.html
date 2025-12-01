@@ -2,78 +2,123 @@
 <html>
 <head>
     <title>Doctor Dashboard</title>
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 30px;
+            color: #1f2933;
+        }
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        h3, h4 {
+            margin-top: 0;
+            color: #0d6efd;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #e4e7eb;
+            text-align: left;
+        }
+        th {
+            background: #eef2ff;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #fff;
+            font-size: 14px;
+            margin-right: 6px;
+        }
+        .btn.success { background: #28a745; }
+        .btn.danger  { background: #dc3545; }
+        .btn.primary { background: #0d6efd; }
+        .btn.secondary { background: #6c757d; }
+        .btn.info { background: #17a2b8; }
+        .muted { color: #9aa5b1; }
+    </style>
 </head>
-<body class="p-4">
+<body>
 
-<h3>Doctor Dashboard</h3>
+<div class="card">
+    <h3>Doctor Dashboard</h3>
+    <p><b>Name:</b> {{ doctor.name }}</p>
+    <p><b>Specialization:</b> {{ doctor.specialization }}</p>
+    <p><b>Experience:</b> {{ doctor.experience }}</p>
+</div>
 
-<p><b>Name:</b> {{ doctor.name }}</p>
-<p><b>Specialization:</b> {{ doctor.specialization }}</p>
-<p><b>Experience:</b> {{ doctor.experience }}</p>
+<div class="card">
+    <h4>Upcoming Appointments (Next 7 Days) - {{ appointments_count }} appointment(s)</h4>
+    <table>
+        <tr>
+            <th>Patient</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        {% for a, p, u in full_list %}
+        <tr>
+            <td>{{ u.username }}</td>
+            <td>{{ a.date }}</td>
+            <td>{{ a.time }}</td>
+            <td>{{ a.status }}</td>
+            <td>
+                {% if a.status == 'booked' %}
+                    <a href="/complete_appointment/{{ a.id }}" class="btn success">Complete</a>
+                    <a href="/cancel_appointment/{{ a.id }}" class="btn danger">Cancel</a>
+                {% elif a.status == 'completed' %}
+                    <a href="/add_treatment/{{ a.id }}" class="btn primary">Add Treatment</a>
+                {% else %}
+                    <span class="muted">No action</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
 
-<hr>
+<div class="card">
+    <h4>My Patients - {{ patients_count }} patient(s)</h4>
+    <a href="/doctor_patients" class="btn info">View All Patients</a>
+</div>
 
-<h4>My Appointments</h4>
-
-<table class="table table-bordered">
-    <tr>
-        <th>Patient</th>
-        <th>Date</th>
-        <th>Time</th>
-        <th>Status</th>
-        <th>Action</th>
-    </tr>
-
-    {% for a, p, u in full_list %}
-    <tr>
-        <td>{{ u.username }}</td>
-        <td>{{ a.date }}</td>
-        <td>{{ a.time }}</td>
-        <td>{{ a.status }}</td>
-        <td>
-            {% if a.status == 'booked' %}
-                <a href="/complete_appointment/{{ a.id }}" class="btn btn-sm btn-success">Complete</a>
-                <a href="/cancel_appointment/{{ a.id }}" class="btn btn-sm btn-danger">Cancel</a>
-
-            {% elif a.status == 'completed' %}
-                <a href="/add_treatment/{{ a.id }}" class="btn btn-sm btn-primary">Add Treatment</a>
-
-            {% else %}
-                <span class="text-muted">No action</span>
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-
-
-
-<hr>
-
-<h4>My Availability</h4>
-
-<table class="table table-bordered">
-    <tr>
-        <th>Date</th>
-        <th>Slot</th>
-        <th>Action</th>
-    </tr>
-
-    {% for a in avails %}
-    <tr>
-        <td>{{ a.date }}</td>
-        <td>{{ a.slot }}</td>
-        <td>
-            <a href="/delete_availability/{{ a.id }}" class="btn btn-sm btn-danger">Delete</a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-<a class="btn btn-primary" href="/doctor_patients">My Patient</a>
-<a class="btn btn-primary" href="/add_availability">Add Availability</a>
-<a class="btn btn-secondary" href="/logout">Logout</a>
+<div class="card">
+    <h4>My Availability</h4>
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Slot</th>
+            <th>Action</th>
+        </tr>
+        {% for a in avails %}
+        <tr>
+            <td>{{ a.date }}</td>
+            <td>{{ a.slot }}</td>
+            <td>
+                <a href="/delete_availability/{{ a.id }}" class="btn danger">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div style="margin-top:15px;">
+        <a class="btn primary" href="/add_availability">Add Availability</a>
+        <a class="btn secondary" href="/logout">Logout</a>
+    </div>
+</div>
 
 </body>
 </html>
